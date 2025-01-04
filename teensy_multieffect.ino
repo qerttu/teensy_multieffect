@@ -11,31 +11,32 @@
 #include <Encoder.h>
 
 
+
 // GUItool: begin automatically generated code
-AudioInputI2S            i2s1;           //xy=126,418
-AudioEffectBitcrusher    bitcrusher_r;   //xy=288,542
-AudioEffectBitcrusher    bitcrusher_l;   //xy=327,358
-AudioMixer4              bitcrusher_drywet_l; //xy=352,289
-AudioMixer4              bitcrusher_drywet_r; //xy=373,436
-AudioFilterBiquad        delay_lp_l;     //xy=557,132
-AudioMixer4              delay_feedback_r; //xy=575,545
-AudioFilterBiquad        delay_lp_r;     //xy=575,639
-AudioMixer4              delay_feedback_l; //xy=592,242
-AudioAnalyzePeak         peak1;          //xy=715,771
-AudioEffectDelay         delay_r;        //xy=726,584
-AudioEffectDelay         delay_l;        //xy=746,140
-AudioMixer4              delay_drywet_l; //xy=844,325
-AudioMixer4              delay_drywet_r; //xy=851,473
-AudioEffectFreeverb      freeverb_l;     //xy=1009,373
-AudioEffectFreeverb      freeverb_r;     //xy=1016,532
-AudioFilterBiquad        biquad1;        //xy=1021,741
-AudioMixer4              reverb_drywet_l; //xy=1186,340
-AudioMixer4              reverb_drywet_r; //xy=1193,490
-AudioFilterLadder        filter_r;       //xy=1374,502
-AudioFilterLadder        filter_l;       //xy=1379,350
-AudioAnalyzePeak         peak_R;          //xy=1524,660
-AudioOutputI2S           i2s2;           //xy=1555,431
-AudioAnalyzePeak         peak_L;          //xy=1597.9999999999995,253.99999999999994
+AudioInputI2S            i2s1;           //xy=194.75,508
+AudioEffectBitcrusher    bitcrusher_r;   //xy=495.75,587
+AudioEffectBitcrusher    bitcrusher_l;   //xy=500.75,449
+AudioMixer4              bitcrusher_drywet_l; //xy=525.75,380
+AudioMixer4              bitcrusher_drywet_r; //xy=546.75,527
+AudioFilterBiquad        delay_lp_l;     //xy=730.75,223
+AudioMixer4              delay_feedback_r; //xy=748.75,636
+AudioFilterBiquad        delay_lp_r;     //xy=748.75,730
+AudioMixer4              delay_feedback_l; //xy=765.75,333
+AudioEffectDelay         delay_r;        //xy=899.75,675
+AudioEffectDelay         delay_l;        //xy=919.75,231
+AudioMixer4              delay_drywet_l; //xy=1017.75,416
+AudioMixer4              delay_drywet_r; //xy=1024.75,564
+AudioFilterBiquad        verb_lp_l;      //xy=1035.75,484
+AudioFilterBiquad        verb_lp_r;      //xy=1087.75,679
+AudioEffectFreeverb      freeverb_r;     //xy=1133.750015258789,875.0000095367432
+AudioEffectFreeverb      freeverb_l;     //xy=1136.750015258789,819.0000076293945
+AudioMixer4              rev_mix;         //xy=1193.750015258789,289.7500057220459
+AudioEffectFreeverbStereo freeverb_st;     //xy=1321.7500190734863,261.75000381469727
+AudioMixer4              reverb_drywet_l; //xy=1359.75,431
+AudioMixer4              reverb_drywet_r; //xy=1366.75,581
+AudioFilterLadder        filter_r;       //xy=1490.75,704
+AudioFilterLadder        filter_l;       //xy=1521.75,292
+AudioOutputI2S           i2s2;           //xy=1657.75,500
 AudioConnection          patchCord1(i2s1, 0, bitcrusher_drywet_l, 0);
 AudioConnection          patchCord2(i2s1, 0, bitcrusher_l, 0);
 AudioConnection          patchCord3(i2s1, 1, bitcrusher_drywet_r, 0);
@@ -46,28 +47,28 @@ AudioConnection          patchCord7(bitcrusher_drywet_l, 0, delay_feedback_l, 0)
 AudioConnection          patchCord8(bitcrusher_drywet_l, 0, delay_drywet_l, 0);
 AudioConnection          patchCord9(bitcrusher_drywet_r, 0, delay_feedback_r, 0);
 AudioConnection          patchCord10(bitcrusher_drywet_r, 0, delay_drywet_r, 0);
-AudioConnection          patchCord11(bitcrusher_drywet_r, peak1);
-AudioConnection          patchCord12(delay_lp_l, 0, delay_feedback_l, 1);
-AudioConnection          patchCord13(delay_feedback_r, delay_r);
-AudioConnection          patchCord14(delay_lp_r, 0, delay_feedback_r, 1);
-AudioConnection          patchCord15(delay_feedback_l, delay_l);
-AudioConnection          patchCord16(delay_r, 0, delay_lp_r, 0);
-AudioConnection          patchCord17(delay_r, 0, delay_drywet_r, 1);
-AudioConnection          patchCord18(delay_l, 0, delay_lp_l, 0);
-AudioConnection          patchCord19(delay_l, 0, delay_drywet_l, 1);
-AudioConnection          patchCord20(delay_drywet_l, 0, reverb_drywet_l, 0);
-AudioConnection          patchCord21(delay_drywet_l, freeverb_l);
-AudioConnection          patchCord22(delay_drywet_r, 0, reverb_drywet_r, 0);
-AudioConnection          patchCord23(delay_drywet_r, freeverb_r);
-AudioConnection          patchCord24(freeverb_l, 0, reverb_drywet_l, 1);
-AudioConnection          patchCord25(freeverb_r, 0, reverb_drywet_r, 1);
-AudioConnection          patchCord26(reverb_drywet_l, 0, filter_l, 0);
-AudioConnection          patchCord27(reverb_drywet_l, peak_L);
-AudioConnection          patchCord28(reverb_drywet_r, 0, filter_r, 0);
-AudioConnection          patchCord29(reverb_drywet_r, peak_R);
+AudioConnection          patchCord11(delay_lp_l, 0, delay_feedback_l, 1);
+AudioConnection          patchCord12(delay_feedback_r, delay_r);
+AudioConnection          patchCord13(delay_lp_r, 0, delay_feedback_r, 1);
+AudioConnection          patchCord14(delay_feedback_l, delay_l);
+AudioConnection          patchCord15(delay_r, 0, delay_lp_r, 0);
+AudioConnection          patchCord16(delay_r, 0, delay_drywet_r, 1);
+AudioConnection          patchCord17(delay_l, 0, delay_lp_l, 0);
+AudioConnection          patchCord18(delay_l, 0, delay_drywet_l, 1);
+AudioConnection          patchCord19(delay_drywet_l, 0, reverb_drywet_l, 0);
+AudioConnection          patchCord20(delay_drywet_l, verb_lp_l);
+AudioConnection          patchCord21(delay_drywet_r, 0, reverb_drywet_r, 0);
+AudioConnection          patchCord22(delay_drywet_r, verb_lp_r);
+AudioConnection          patchCord23(verb_lp_l, 0, rev_mix, 0);
+AudioConnection          patchCord24(verb_lp_r, 0, rev_mix, 1);
+AudioConnection          patchCord25(rev_mix, freeverb_st);
+AudioConnection          patchCord26(freeverb_st, 0, reverb_drywet_l, 1);
+AudioConnection          patchCord27(freeverb_st, 1, reverb_drywet_r, 1);
+AudioConnection          patchCord28(reverb_drywet_l, 0, filter_l, 0);
+AudioConnection          patchCord29(reverb_drywet_r, 0, filter_r, 0);
 AudioConnection          patchCord30(filter_r, 0, i2s2, 1);
 AudioConnection          patchCord31(filter_l, 0, i2s2, 0);
-AudioControlSGTL5000     audioShield;    //xy=1016,110
+AudioControlSGTL5000     audioShield;    //xy=1189.75,201
 // GUItool: end automatically generated code
 
 
@@ -339,7 +340,20 @@ void initEffectValues() {
     freeverb_l.damping(0);
 
     freeverb_l.roomsize(0.5);
-    freeverb_r.damping(0);    
+    freeverb_r.damping(0);
+
+    freeverb_st.roomsize(0.5);
+    freeverb_st.damping(0);
+
+    rev_mix.gain(0,1);
+    rev_mix.gain(1,1);
+
+    verb_lp_l.setHighpass(0,500,0.3);
+    verb_lp_r.setHighpass(0,500,0.3);
+
+    verb_lp_l.setLowpass(0,5000,0.3);
+    verb_lp_r.setLowpass(0,5000,0.3); 
+        
 
     //-- LP FILTER
    // filter_l.setLowpass(0,filter_cutoff,filter_res/10); 
@@ -578,13 +592,6 @@ void updatePots() {
       pot_read = (byte)map(pot6.getValue(),0,1023,0,127);      
       handleCC(1,CC_DELAY_DRYW,pot_read);      
      }
-
-    // reverb
-    if(pot8.hasChanged()) {
-      current_pot = 8;
-      pot_read = (byte)map(pot8.getValue(),0,1023,0,127);     
-      handleCC(1,CC_REVERB_DRYW,pot_read);            
-     }
     
     // *** DELAY PARAMETERS ************************************
 
@@ -605,9 +612,10 @@ void updatePots() {
       current_pot = 4;
       pot_read = (byte)map(pot4.getValue(),0,1023,0,127);
       if (sw_state == UP)
-        handleCC(1,CC_REVERB_ROOM,pot_read);
+        handleCC(1,CC_REVERB_DRYW,pot_read);  
       else 
-        handleCC(1,CC_REVERB_DAMP,pot_read); 
+        handleCC(1,CC_REVERB_ROOM,pot_read);
+        //handleCC(1,CC_REVERB_DAMP,pot_read); 
       }
 
 
@@ -615,11 +623,16 @@ void updatePots() {
     if(pot7.hasChanged()) {
       current_pot = 7;
       pot_read = (byte)map(pot7.getValue(),0,1023,0,127);
-      if (sw_state == UP) 
-        handleCC(1,CC_LOWPASS_CUTOFF,pot_read);
-      else
-        handleCC(1,CC_LOWPASS_RESO,pot_read);
+      handleCC(1,CC_LOWPASS_CUTOFF,pot_read);  
       }
+
+    if(pot8.hasChanged()) {
+      current_pot = 8;
+      pot_read = (byte)map(pot8.getValue(),0,1023,0,127);     
+      handleCC(1,CC_LOWPASS_RESO,pot_read);
+      //handleCC(1,CC_REVERB_DRYW,pot_read);            
+     }
+      
 
 
     // **** BITCRUSH PARAMETERS              
@@ -854,6 +867,7 @@ void handleCC(byte channel, byte control, byte value) {
           reverb_roomsize = (float)value / 127;
           freeverb_l.roomsize(reverb_roomsize);
           freeverb_r.roomsize(reverb_roomsize);
+          freeverb_st.roomsize(reverb_roomsize);
          
           #ifdef DEBUG2
            Serial.print("Roomsize: ");
@@ -873,6 +887,7 @@ void handleCC(byte channel, byte control, byte value) {
          reverb_damp = (float)value / 127;
          freeverb_l.damping(reverb_damp);
          freeverb_r.damping(reverb_damp);
+         freeverb_st.damping(reverb_damp);
           
         #ifdef DEBUG2
          Serial.print("Damping: ");
