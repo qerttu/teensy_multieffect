@@ -1,32 +1,28 @@
-#include <Audio.h>
-#include <Wire.h>
-#include <SPI.h>
-#include <SD.h>
-#include <SerialFlash.h>
-
-// GUItool: begin automatically generated code
-AudioInputI2S            i2s1;           //xy=130.75,422
-AudioEffectBitcrusher    bitcrusher_r;   //xy=431.75,501
-AudioEffectBitcrusher    bitcrusher_l;   //xy=436.75,363
-AudioMixer4              bitcrusher_drywet_l; //xy=461.75,294
-AudioMixer4              bitcrusher_drywet_r; //xy=482.75,441
-AudioFilterBiquad        delay_lp_l;     //xy=666.75,137
-AudioMixer4              delay_feedback_r; //xy=684.75,550
-AudioFilterBiquad        delay_lp_r;     //xy=684.75,644
-AudioMixer4              delay_feedback_l; //xy=701.75,247
-AudioEffectDelay         delay_r;        //xy=835.75,589
-AudioEffectDelay         delay_l;        //xy=855.75,145
-AudioMixer4              delay_drywet_l; //xy=953.75,330
-AudioMixer4              delay_drywet_r; //xy=960.75,478
-AudioFilterBiquad        verb_lp_l;        //xy=971.75,398.75
-AudioFilterBiquad        verb_lp_r;        //xy=1023.75,593.75
-AudioEffectFreeverb      freeverb_r;     //xy=1125.75,537
-AudioEffectFreeverb      freeverb_l;     //xy=1129.750015258789,409.0000057220459
-AudioMixer4              reverb_drywet_l; //xy=1295.75,345
-AudioMixer4              reverb_drywet_r; //xy=1302.75,495
-AudioFilterLadder        filter_r;       //xy=1426.7500228881836,618.0000381469727
-AudioFilterLadder        filter_l;       //xy=1457.750144958496,206.00003623962402
-AudioOutputI2S           i2s2;           //xy=1593.75,414
+/ GUItool: begin automatically generated code
+AudioInputI2S            i2s1;           //xy=194.75,508
+AudioEffectBitcrusher    bitcrusher_r;   //xy=495.75,587
+AudioEffectBitcrusher    bitcrusher_l;   //xy=500.75,449
+AudioMixer4              bitcrusher_drywet_l; //xy=525.75,380
+AudioMixer4              bitcrusher_drywet_r; //xy=546.75,527
+AudioFilterBiquad        delay_lp_l;     //xy=730.75,223
+AudioMixer4              delay_feedback_r; //xy=748.75,636
+AudioFilterBiquad        delay_lp_r;     //xy=748.75,730
+AudioMixer4              delay_feedback_l; //xy=765.75,333
+AudioEffectDelay         delay_r;        //xy=899.75,675
+AudioEffectDelay         delay_l;        //xy=919.75,231
+AudioMixer4              delay_drywet_l; //xy=1017.75,416
+AudioMixer4              delay_drywet_r; //xy=1024.75,564
+AudioFilterBiquad        verb_lp_l;      //xy=1035.75,484
+AudioFilterBiquad        verb_lp_r;      //xy=1087.75,679
+AudioEffectFreeverb      freeverb_r;     //xy=1133.750015258789,875.0000095367432
+AudioEffectFreeverb      freeverb_l;     //xy=1136.750015258789,819.0000076293945
+AudioMixer4              rev_mix;         //xy=1193.750015258789,289.7500057220459
+AudioEffectFreeverbStereo freeverb_st;     //xy=1321.7500190734863,261.75000381469727
+AudioMixer4              reverb_drywet_l; //xy=1359.75,431
+AudioMixer4              reverb_drywet_r; //xy=1366.75,581
+AudioFilterLadder        filter_r;       //xy=1490.75,704
+AudioFilterLadder        filter_l;       //xy=1521.75,292
+AudioOutputI2S           i2s2;           //xy=1657.75,500
 AudioConnection          patchCord1(i2s1, 0, bitcrusher_drywet_l, 0);
 AudioConnection          patchCord2(i2s1, 0, bitcrusher_l, 0);
 AudioConnection          patchCord3(i2s1, 1, bitcrusher_drywet_r, 0);
@@ -49,13 +45,14 @@ AudioConnection          patchCord19(delay_drywet_l, 0, reverb_drywet_l, 0);
 AudioConnection          patchCord20(delay_drywet_l, verb_lp_l);
 AudioConnection          patchCord21(delay_drywet_r, 0, reverb_drywet_r, 0);
 AudioConnection          patchCord22(delay_drywet_r, verb_lp_r);
-AudioConnection          patchCord23(verb_lp_l, freeverb_l);
-AudioConnection          patchCord24(verb_lp_r, freeverb_r);
-AudioConnection          patchCord25(freeverb_r, 0, reverb_drywet_r, 1);
-AudioConnection          patchCord26(freeverb_l, 0, reverb_drywet_l, 1);
-AudioConnection          patchCord27(reverb_drywet_l, 0, filter_l, 0);
-AudioConnection          patchCord28(reverb_drywet_r, 0, filter_r, 0);
-AudioConnection          patchCord29(filter_r, 0, i2s2, 1);
-AudioConnection          patchCord30(filter_l, 0, i2s2, 0);
-AudioControlSGTL5000     audioShield;    //xy=1125.75,115
+AudioConnection          patchCord23(verb_lp_l, 0, rev_mix, 0);
+AudioConnection          patchCord24(verb_lp_r, 0, rev_mix, 1);
+AudioConnection          patchCord25(rev_mix, freeverb_st);
+AudioConnection          patchCord26(freeverb_st, 0, reverb_drywet_l, 1);
+AudioConnection          patchCord27(freeverb_st, 1, reverb_drywet_r, 1);
+AudioConnection          patchCord28(reverb_drywet_l, 0, filter_l, 0);
+AudioConnection          patchCord29(reverb_drywet_r, 0, filter_r, 0);
+AudioConnection          patchCord30(filter_r, 0, i2s2, 1);
+AudioConnection          patchCord31(filter_l, 0, i2s2, 0);
+AudioControlSGTL5000     audioShield;    //xy=1189.75,201
 // GUItool: end automatically generated code
