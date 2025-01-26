@@ -81,7 +81,7 @@ AudioControlSGTL5000     audioShield;    //xy=1189.75,201
 //#define DEBUG
 
 // POTS and BUTTONS and ENCODER
-//#define DEBUG2
+#define DEBUG2
 
 // DISPLAY
 //#define DEBUG3
@@ -155,6 +155,7 @@ Encoder knob(DT_PIN, CLK_PIN);
 Bounce swButton = Bounce(SW_PIN, 10);
 byte sw_state = UP;
 int previous_pos = 0;
+bool bitcrushing = true;
 
 
 //const byte SW1 = 5;
@@ -583,7 +584,9 @@ void updatePots() {
     if(pot5.hasChanged()) {
       current_pot = 5;
       pot_read = (byte)map(pot5.getValue(),0,1023,0,127);      
-      handleCC(1,CC_BITCRUSH_BITS,pot_read);      
+      if (bitcrushing) {
+        handleCC(1,CC_BITCRUSH_BITS,pot_read);
+      }      
      }
 
     // delay
@@ -639,7 +642,9 @@ void updatePots() {
     if(pot1.hasChanged()) {
       current_pot = 1;
       pot_read = (byte)map(pot1.getValue(),0,1023,0,127);
-      handleCC(1,CC_BITCRUSH_RATE,pot_read);
+      if (bitcrushing) {
+        handleCC(1,CC_BITCRUSH_RATE,pot_read);
+        }
       }           
 
 
@@ -662,17 +667,35 @@ void updateButtons() {
 
     if (swButton.update()) {
       if (swButton.fallingEdge()) {
-        #ifdef DEBUG2
-          Serial.println("State DOWN, Button pressed");
-        #endif
         sw_state = DOWN;
-        }
-      
-      if (swButton.risingEdge()) {
         #ifdef DEBUG2
           Serial.println("State UP, Button released");
         #endif
+        }
+      
+      if (swButton.risingEdge()) {
          sw_state=UP;
+        // toggle bitcusher on and off
+        if (bitcrushing){
+            bitcrusher_drywet_l.gain(DRY,1);
+            bitcrusher_drywet_l.gain(WET,0);
+            bitcrusher_drywet_r.gain(DRY,1);
+            bitcrusher_drywet_r.gain(WET,0);      
+            bitcrushing=false;
+          }
+        else
+        {
+            bitcrusher_drywet_l.gain(DRY,0);
+            bitcrusher_drywet_l.gain(WET,1);
+            bitcrusher_drywet_r.gain(DRY,0);
+            bitcrusher_drywet_r.gain(WET,1);             
+            bitcrushing=true;
+        }
+        #ifdef DEBUG2
+          Serial.println("State UP, Button released.");
+          Serial.print("Bitcrushing is ");
+          Serial.println(bitcrushing);
+        #endif
         }
       }
   }
