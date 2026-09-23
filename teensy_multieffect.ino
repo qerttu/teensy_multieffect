@@ -1,3 +1,18 @@
+/*
+Version: 1.01
+
+Release notes:
+
+1.01
+- Fixed bitcrusher on-off to work as pressed only
+- Added bitcrusher dry-wet for pot1 on encoderbutton push
+
+1.0
+- initial version
+
+*/
+
+
 
 #include <Audio.h>
 #include <Wire.h>
@@ -72,9 +87,6 @@ AudioControlSGTL5000     audioShield;    //xy=1189.75,201
 // GUItool: end automatically generated code
 
 
-
-
-
 // *********** DEBUG LEVELS
 
 // MIDI CC 
@@ -125,6 +137,7 @@ const float MAXDELAYTIME = 245;
 byte bitcrush_bits = 16;
 int bitcrush_samplerate = 44100;
 float bitcrush_wet = 0;
+float bitcrush_dry = 0;
 
 float delay_feedback = 0;
 float delay_time = 0;
@@ -155,6 +168,10 @@ Encoder knob(DT_PIN, CLK_PIN);
 Bounce swButton = Bounce(SW_PIN, 10);
 byte sw_state = UP;
 int previous_pos = 0;
+unsigned long pressedTime = 0;  // Time when the button was pressed
+ unsigned long elapsedTime = 0; // Time how long the button was pressed
+bool isPressing = false;        // Track if button is currently held
+
 bool bitcrushing = true;
 
 
@@ -202,6 +219,9 @@ void setup()
     audioShield.enable();
     audioShield.inputSelect(audioChSelect);
     audioShield.volume(vol);
+
+    // Disable the ADC high-pass filter to reduce self-noise or DC blocking issues
+    audioShield.adcHighPassFilterDisable(); 
     
     
 
@@ -577,26 +597,14 @@ void updatePots() {
     pot7.update();
     pot8.update();
 
+    
+    // *** DELAY PARAMETERS ************************************
 
-    //*****  DRY / WETS *********************************
-
-    // bitcrush
-    if(pot5.hasChanged()) {
-      current_pot = 5;
-      pot_read = (byte)map(pot5.getValue(),0,1023,0,127);      
-      if (bitcrushing) {
-        handleCC(1,CC_BITCRUSH_BITS,pot_read);
-      }      
-     }
-
-    // delay
     if(pot6.hasChanged()) {
       current_pot = 6;
       pot_read = (byte)map(pot6.getValue(),0,1023,0,127);      
       handleCC(1,CC_DELAY_DRYW,pot_read);      
      }
-    
-    // *** DELAY PARAMETERS ************************************
 
     if(pot2.hasChanged()) {
       current_pot = 2;
@@ -643,9 +651,24 @@ void updatePots() {
       current_pot = 1;
       pot_read = (byte)map(pot1.getValue(),0,1023,0,127);
       if (bitcrushing) {
-        handleCC(1,CC_BITCRUSH_RATE,pot_read);
+         handleCC(1,CC_BITCRUSH_RATE,pot_read);
         }
-      }           
+      }
+
+    if(pot5.hasChanged()) {
+      current_pot = 5;
+      pot_read = (byte)map(pot5.getValue(),0,1023,0,127);      
+      if (bitcrushing) {
+
+        if (sw_state == UP){
+        handleCC(1,CC_BITCRUSH_BITS,pot_read);
+          }
+        else {
+          handleCC(1,CC_BITCRUSH_DRYW,pot_read);
+          }
+        
+      }      
+     }                 
 
 
     //DEBUG
@@ -666,30 +689,44 @@ void updateButtons() {
       //****** BUTTON LOGIC
 
     if (swButton.update()) {
+      
+      // button is pressed down
       if (swButton.fallingEdge()) {
         sw_state = DOWN;
+        isPressing = true;
+        pressedTime = millis();
         #ifdef DEBUG2
-          Serial.println("State UP, Button released");
+          Serial.println("State DOWN, Button pushed down");
         #endif
         }
+
+      // count the time of pressed  
+      if (isPressing && sw_state==DOWN) {
+        elapsedTime = millis() - pressedTime;
+        }  
       
       if (swButton.risingEdge()) {
          sw_state=UP;
-        // toggle bitcusher on and off
-        if (bitcrushing){
-            bitcrusher_drywet_l.gain(DRY,1);
-            bitcrusher_drywet_l.gain(WET,0);
-            bitcrusher_drywet_r.gain(DRY,1);
-            bitcrusher_drywet_r.gain(WET,0);      
-            bitcrushing=false;
+         
+        // toggle bitcusher on and off if button pressed less than 0.5 seconds
+        if ((elapsedTime < 500)) {
+          if (bitcrushing){
+              bitcrusher_drywet_l.gain(DRY,1);
+              bitcrusher_drywet_l.gain(WET,0);
+              bitcrusher_drywet_r.gain(DRY,1);
+              bitcrusher_drywet_r.gain(WET,0);      
+              bitcrushing=false;
+              analogWrite(LED_PIN, LED_LOW);
+            }
+          else
+          {
+              bitcrusher_drywet_l.gain(DRY,bitcrush_dry);
+              bitcrusher_drywet_l.gain(WET,bitcrush_wet);
+              bitcrusher_drywet_r.gain(DRY,bitcrush_dry);
+              bitcrusher_drywet_r.gain(WET,bitcrush_wet);             
+              bitcrushing=true;
+              analogWrite(LED_PIN, LED_HIGH);
           }
-        else
-        {
-            bitcrusher_drywet_l.gain(DRY,0);
-            bitcrusher_drywet_l.gain(WET,1);
-            bitcrusher_drywet_r.gain(DRY,0);
-            bitcrusher_drywet_r.gain(WET,1);             
-            bitcrushing=true;
         }
         #ifdef DEBUG2
           Serial.println("State UP, Button released.");
@@ -750,8 +787,11 @@ void handleCC(byte channel, byte control, byte value) {
        if (bitcrush_wet != ((float)value / 127)) {
 
          bitcrush_wet = (float)value / 127;
+         bitcrush_dry = 1 - bitcrush_wet;
          bitcrusher_drywet_l.gain(WET,bitcrush_wet);
          bitcrusher_drywet_r.gain(WET,bitcrush_wet);   
+         bitcrusher_drywet_l.gain(DRY,bitcrush_dry);
+         bitcrusher_drywet_r.gain(DRY,bitcrush_dry);  
         
         #ifdef DEBUG2
          Serial.print("Bitcrush wet : ");
