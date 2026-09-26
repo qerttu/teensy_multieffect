@@ -1,11 +1,17 @@
 /*
-Version: 1.01
 
 Release notes:
 
+1.03
+- Toggle adcHighPassFilterDisable() to allow feedback
+
+1.02
+- Fixed empty bitcrusher_wet at startup
+
 1.01
-- Fixed bitcrusher on-off to work as pressed only
-- Added bitcrusher dry-wet for pot1 on encoderbutton push
+- Timer for bitcrusher toggle button
+- Added bitcrusher dry-wet for pot1 on encoderbutton pushed down
+- Disabled built in HPF with adcHighPassFilterDisable(); 
 
 1.0
 - initial version
@@ -136,7 +142,7 @@ const float MAXDELAYTIME = 245;
 
 byte bitcrush_bits = 16;
 int bitcrush_samplerate = 44100;
-float bitcrush_wet = 0;
+float bitcrush_wet = 1;
 float bitcrush_dry = 0;
 
 float delay_feedback = 0;
@@ -171,8 +177,8 @@ int previous_pos = 0;
 unsigned long pressedTime = 0;  // Time when the button was pressed
  unsigned long elapsedTime = 0; // Time how long the button was pressed
 bool isPressing = false;        // Track if button is currently held
-
 bool bitcrushing = true;
+bool isHighpass = true;  // On/off for built in highpass filter
 
 
 //const byte SW1 = 5;
@@ -198,6 +204,7 @@ const byte CC_VOLUME = 108;
 const byte CC_BITCRUSH_BITS = 109;
 const byte CC_BITCRUSH_RATE = 110;
 const byte CC_BITCRUSH_DRYW = 111;
+const byte CC_HIGHPASS = 112;
 
 // -----------------------------------------------------------------------------
 
@@ -651,7 +658,12 @@ void updatePots() {
       current_pot = 1;
       pot_read = (byte)map(pot1.getValue(),0,1023,0,127);
       if (bitcrushing) {
-         handleCC(1,CC_BITCRUSH_RATE,pot_read);
+        if (sw_state == UP){
+          handleCC(1,CC_BITCRUSH_RATE,pot_read);
+          }
+        else {
+          handleCC(1,CC_HIGHPASS,pot_read);
+          }
         }
       }
 
@@ -732,6 +744,8 @@ void updateButtons() {
           Serial.println("State UP, Button released.");
           Serial.print("Bitcrushing is ");
           Serial.println(bitcrushing);
+          Serial.println("Wet: " + String(bitcrush_wet));
+          Serial.println("Dry: " + String(bitcrush_dry));
         #endif
         }
       }
@@ -1026,6 +1040,25 @@ void handleCC(byte channel, byte control, byte value) {
       }
     break;
 
+    case CC_HIGHPASS: {
+      if (isHighpass != (bool)map(value,0,127,0,1)) {
+          isHighpass = (bool)map(value,0,127,0,1);  
+
+      if (isHighpass) {
+        audioShield.adcHighPassFilterDisable(); 
+      }
+      else
+      {
+       audioShield.adcHighPassFilterEnable();    
+      }
+         #ifdef DEBUG2
+           Serial.print("isHighpass: ");
+           Serial.print(isHighpass);
+           Serial.println();
+          #endif   
+      }
+    }  
+    break; 
  }
 }      
      
