@@ -2,6 +2,9 @@
 
 Release notes:
 
+1.04
+- Added LED indication for toggle highpass filter
+
 1.03
 - Toggle adcHighPassFilterDisable() to allow feedback
 
@@ -265,14 +268,14 @@ void setup()
       //initiateButtons();
 
     /// ************* POTS
-    pot1.setActivityThreshold(25);
-    pot2.setActivityThreshold(25);
-    pot3.setActivityThreshold(25);
-    pot4.setActivityThreshold(25);
-    pot5.setActivityThreshold(25);
-    pot6.setActivityThreshold(25);
-    pot7.setActivityThreshold(25);
-    pot8.setActivityThreshold(25);
+    pot1.setActivityThreshold(30);
+    pot2.setActivityThreshold(30);
+    pot3.setActivityThreshold(30);
+    pot4.setActivityThreshold(30);
+    pot5.setActivityThreshold(30);
+    pot6.setActivityThreshold(30);
+    pot7.setActivityThreshold(30);
+    pot8.setActivityThreshold(30);
 
     initEffectValues();
        
@@ -740,6 +743,17 @@ void updateButtons() {
               analogWrite(LED_PIN, LED_HIGH);
           }
         }
+        else {
+         //reset led to the current stat
+         if (bitcrushing) {
+              //turn on red led
+             analogWrite(LED_PIN, LED_HIGH);     
+          }
+          else {
+              //turn off red led
+             analogWrite(LED_PIN, LED_LOW);           
+            }          
+          }
         #ifdef DEBUG2
           Serial.println("State UP, Button released.");
           Serial.print("Bitcrushing is ");
@@ -1045,11 +1059,15 @@ void handleCC(byte channel, byte control, byte value) {
           isHighpass = (bool)map(value,0,127,0,1);  
 
       if (isHighpass) {
-        audioShield.adcHighPassFilterDisable(); 
+        audioShield.adcHighPassFilterDisable();       
+        //turn off red led
+        analogWrite(LED_PIN, LED_LOW); 
       }
       else
       {
-       audioShield.adcHighPassFilterEnable();    
+        audioShield.adcHighPassFilterEnable();   
+        //turn on red led
+       analogWrite(LED_PIN, LED_HIGH);    
       }
          #ifdef DEBUG2
            Serial.print("isHighpass: ");
